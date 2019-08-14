@@ -1,0 +1,7 @@
+-v dirA
+dirB
+-v -r dirA
+
+-v dirA dirB
+dirc
+-a

@@ -1,0 +1,77 @@
+#! /bin/bash
+
+# by Xiaoman Wang
+
+#This script is for testing the lab5 project, by running with the testcase file (lab6_testcase), and generate a statistics of all the testcases as the output
+
+#run with: $ lab6 lab6_testcase
+
+
+noerror=()  #array of the command line strings
+error_1=()
+error_2=()
+
+#Way2 To read from a file, also can use:
+#IFS=$'\n'
+#for line in 'cat $1'
+#do
+#	...
+#done
+
+#Way1 to read from a file
+#inputs=$1
+while read -r line
+do
+	#generate the combined command
+	cmmd=("lab5 " "$line")
+	#echo ***testing cmmd ::  ${cmmd[@]} ***
+	#run the command
+	#get the output of the former mixed command
+	output=`${cmmd[*]}`
+	
+	retval=`echo $?` #or retval=$?
+	#echo -e *** output is ------- ***"\n"  $output
+	echo "********** this command returns $retval ***********"
+
+	(( retval == 0 )) && noerror=(${noerror[@]} "${cmmd[@]}" "\n")
+ 	(( retval == 1 )) && error_1=(${error_1[@]} "${cmmd[@]}" "\n")
+	(( retval == 2 )) && error_2=(${error_2[@]} "${cmmd[@]}" "\n")
+done < $1
+
+
+cline=()
+i=0
+for c in ${noerror[*]}
+do
+	[ $c != "\n" ] && cline=(${cline[@]} $c)
+	[ $c == "\n" ] && echo ${cline[*]} && (( i+=1 )) && cline=()
+done
+echo $i cases with no error.
+
+echo -e "\n"
+cline=()
+i=0
+for c in ${error_1[*]}
+do
+	[ $c != "\n" ] && cline=(${cline[@]} $c)
+	[ $c == "\n" ] && echo ${cline[*]} && (( i+=1 )) && cline=()
+done
+echo $i cases with command line error.
+
+
+
+echo -e "\n"
+cline=()
+i=0
+for c in ${error_2[*]}
+do
+	 [ $c != "\n" ] && cline=(${cline[@]} $c)
+	 [ $c == "\n" ] && echo ${cline[*]} && (( i+=1 )) && cline=()
+done
+echo $i cases with invalid input.
+
+
+
+
+
+

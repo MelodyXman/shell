@@ -1,0 +1,83 @@
+#! /bin/bash
+
+## by Xiaoman Wang
+##This project is create tar file of the user defined dir.
+#There are 4 ways to run this project:
+#  	./script5 mydir ---> create a tar of mydir, result tar file is in the current dir;
+#    ./script5 -v mydir ---> create a tar of mydir with option v, the reuslt tar file is in cuurent dir ;
+#    ./script5 mydir dirA ---> create a tar of mydir, the reuslt tar file is in the dirA without verbose ;
+#  	./script5 -v mydir dirA --->  create a tar of mydir, the result tar file is in the dirA with verbose ;
+
+
+
+#1.check if the number input arguments is 0 or 1
+(( $# == 0 || $# > 3 )) && echo too many arguments && exit 1
+
+
+#2. check the option if it has one (if has char after the '-' sign) 
+while getopts v var
+do
+    case $var in
+	v)  optionV=1 
+	;;
+	#if not equals to v
+	*)   echo invalid option
+		 exit 2
+	esac
+done
+
+#if the user has the option entered, then the srcDir is the 2nd variable
+[[ $optionV == 1 ]] && srcDir=$2
+[[ -z $optionV ]] && srcDir=$1
+
+#if the srcDir is missing, exit 
+[[ -z $srcDir ]] && exit 1
+
+#else srcDir is the 1st variable set as the default value
+#3.check sourceDir is valid and not empty
+if [[ ! -d $srcDir ]]
+then
+    echo sourceDir is not valid
+	exit 2
+elif [ -z "$(ls -A  $srcDir)" ] # check empty dir if the result is empty string,-A will show hidden dirs as well 
+then
+    echo sourceDir is empty
+	exit 2
+else
+    #get the date-time used as file name
+	DATE=`date +%Y-%m-%d-%H%M`
+
+	#shift left one var in the input command line if optionV=1,else no shift
+    [[ $optionV == 1 ]] && FILE=$2
+	[[ -z $optionV ]] && FILE=$1
+	
+	#get the destDir
+	(( n = $# - 1 ))
+	shift $n
+	DEST=$1
+	#echo $srcDir '->' $DEST
+	
+    #check if the dest dir is empty, or if it equals to srcDir, then make the destDir as current path
+	[[ ! -d $DEST ]] && echo dest dir invalid && exit 2
+    [[ "$srcDir" == "$DEST" ]] && DEST='.'
+	#echo des dir is $DEST 
+	
+
+	# create the tar file
+	if [[ -z $optionV ]]
+    then
+		
+		#create file in cur dir if srcDir is empty
+		tar -czf $FILE$DATE.tar $srcDir
+		[ $DEST != '.' ] &&  mv $FILE$DATE.tar $DEST
+	else
+        tar -czvf $FILE$DATE.tar $srcDir
+		[ $DEST != '.' ] && mv $FILE$DATE.tar $DEST
+	
+	fi
+fi
+
+echo created file $FILE$DATE.tar in the dest directory $DEST
+exit 0
+
+
