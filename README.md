@@ -10,4 +10,8 @@ Shell script running in Linux system
 
 ./script5 -v mydir dirA --->  create a tar of mydir, the result tar file is in the dirA with verbose ;
 
+#
+#
+## Testing
+#run with: $ lab6 lab6_testcase
 
