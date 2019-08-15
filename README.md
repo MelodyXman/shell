@@ -1,6 +1,6 @@
-Shell script running in Linux system	
-##This project is create tar file of the user defined dir.	
-##There are 4 ways to run this project:		
+## Shell script running in Linux system	   	
+## This project is create tar file of the user defined dir.	
+## There are 4 ways to run this project:		
 
 ./script5 mydir ---> create a tar of mydir, result tar file is in the current dir;
 
